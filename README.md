@@ -1,1 +1,1 @@
-# DDS-1ro-Parciales
+# DDS-1ros-Parciales
