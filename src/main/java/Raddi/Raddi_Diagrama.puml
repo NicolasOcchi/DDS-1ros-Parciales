@@ -1,0 +1,95 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+Partida "*"<--> Cuestionario
+
+class Partida{
+cantGanadores
+ListaAlumnos
+codigoAcceso
+registrarAlumno(alumno)
+realizarPregunta()
+resultadoParcial()
+resultadoFinal() //con podio
+ganadorDeGanadores()
+promedioRtaTotal(alumno)
+promedioTiempoRta(alumno)
+}
+
+Partida <-->"*" Alumno
+
+class Alumno{
+nick
+
+}
+
+Partida "*"<--> Docente
+
+class Docente{
+legajo
+ListaPartidas
+ListaCuestionarios
+
+}
+
+Cuestionario -->"*" Pregunta
+Docente -->"*" Cuestionario
+
+class Cuestionario{
+nombre
+docente
+descripcion
+temasTeoricos
+ListaPreguntas
+promedioGralRtaTotales()
+Cuestionario() //constructor
+CuestionarioAutomatico(Nombre, LotePreguntas, Temas, Materias, CantPreguntas)
+}
+
+
+class Pregunta{
+Tipo
+Puntos()
+TiempoLimite()
+}
+
+TipoPregunta <|.. VerdaderoFalso
+TipoPregunta <|.. MultipleChoice
+TipoPregunta <|.. PreguntaDesarrollar
+TipoPregunta --> Pregunta
+
+interface TipoPregunta{
+Puntos()
+TiempoLimite()
+}
+
+class VerdaderoFalso{
+Puntos()
+TiempoLimite()
+}
+class MultipleChoice{
+Puntos()
+TiempoLimite()
+}
+class PreguntaDesarrollar{
+Puntos()
+TiempoLimite()
+}
+
+
+Docente "*"<-- validadorDocente
+
+validadorDocente ..|> SistemaPAR
+
+class validadorDocente{
+}
+
+interface SistemaPAR{
+}
+
+@enduml
+//TiempoLimite depende del tipo de pregunta
+//Puntaje predefinido por el tipo de pregunta
+
+EN PREGUNTA (usando composición):
+Puntos() : tipo.puntos()

@@ -1,0 +1,79 @@
+@startuml
+Epica -->"*" Tarea
+Epica --|> Tarea
+TareaNormal --|> Tarea
+
+interface Tarea {
+TareasAsignadas() <ListaTareasAsignadas
+}
+
+class Epica {
+
+TareasAsignadas() <ListaTareasAsignadas>
+}
+
+class TareaNormal {
+nombre
+descripcion
+Proyecto proyecto
+Persona Asignada
+urlImagen
+iteracion Iteracion
+
+AsignarTarea(Asignador,Asignado)
+}
+TareaNormal --> TipoTarea
+enum TipoTarea{
+fallo
+historia
+}
+
+
+class Notificador implements Notifier{
+notificar(email,message)
+}
+
+
+Notificador --> TareaNormal
+
+interface Notifier {
+notify(message,email)
+}
+
+class Proyecto {
+nombre
+crearIteracion()
+verTareasPlaneadas()
+getEstadoTarea(Tarea)
+}
+Proyecto -->"*" Tarea
+Proyecto -->"*" Iteracion
+
+class Iteracion {
+inicio
+fin
+}
+
+interface Estado {
+cambiarEstado(Estado)
+}
+
+TareaNormal --> Estado
+
+class Pendiente implements Estado  {
+cambiarEstado(Estado)
+
+}
+class PorHacer implements Estado {
+cambiarEstado(Estado)
+}
+class EnProgreso implements Estado {
+cambiarEstado(Estado)
+}
+class Terminada  implements Estado{
+cambiarEstado(Estado)
+}
+
+TareaNormal --> Iteracion
+
+@enduml
