@@ -4,10 +4,14 @@ email
 medioDePago
 nivel
 medioDeComunicacion
-ListaTransferencias
+List<Transferencia> Transferencias
+ListaUltimosMontosProcesados
 estadoCuenta
+enviarTransaccionesPendientes()
+procesarTransaccionesValidadas()
 saldoDisponible()
 listarTransacciones()
+procesarTransaccionesPendientes()
 recibir() // desarrolla otro equipo
 enviar(monto, cuenta)
 depositar(monto)
@@ -83,16 +87,17 @@ List<Boolean> validateTransfer(...)
 sendUnBlockRequest(...)
 }
 
-class AdapterBCRAClient implements BCRAClient{
+class AdapterBCRA implements BCRAClient{
 solicitarNivelCuenta(ingreso)
-validarTransferencias(cuenta)
+validarTransferencias(Cuenta, ListaMontos)
+enviarTransferenciaValidadas(Cuenta, ListaMontos)
 solicitarReactivacion(cuenta)
 }
 
-AdapterBCRAClient -->"*" Transferencia
-AdapterBCRAClient -->"*" Cuenta
+AdapterBCRA -->"*" Transferencia
+AdapterBCRA -->"*" Cuenta
 
-MedioComunicacion "*"<-- AdapterBCRAClient
+MedioComunicacion "*"<-- AdapterBCRA
 
 interface MedioComunicacion{
 
