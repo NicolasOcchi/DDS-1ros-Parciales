@@ -9,7 +9,8 @@ inicador
 PDF
 Orden orden
 ListaColaboradores
-ListaColaboradoresQueHicieronAccion
+ListaColaboradoresQueLeyeron
+ListaColaboradoresQueFirmaron
 notificarPosibilidadDeRealizarAccion(Colaborador) //se notifica segun el orden
 sePuedeLiberarDocumento() // se ejecuta cada vez que firma uno
 liberarDocumento()
@@ -27,9 +28,11 @@ Colaborador <|-- Firmante
 Colaborador <|-- Lector
 
 class Colaborador{
-medioComunicacion
-listaDocumentosCompartidos
+ListaNotificacionesPendientes
+ListaMediosDeComunicacion
+ListaDocumentosCompartidos
 realizarAccion(documento)
+notificar()
 }
 
 class Firmante{
@@ -39,6 +42,22 @@ realizarAccion(documento)
 class Lector{
 realizarAccion(documento)
 }
+
+MedioComunicacion <|.. Whatsapp
+MedioComunicacion <|.. SMS
+MedioComunicacion <|.. Email
+MedioComunicacion <|.. Aplicacion
+
+MedioComunicacion "*"<-- Colaborador
+
+interface MedioComunicacion{
+
+}
+
+class Whatsapp{}
+class SMS{}
+class Email{}
+class Aplicacion{}
 
 GeneradorDeFirma <|..GeneradorDeFirmaAPI
 GeneradorDeFirmaAPI -->"*" ProcesoFirma
@@ -51,39 +70,24 @@ interface GeneradorDeFirma{
 generarFirma(nombre, apellido, email, telefono): string
 }
 
-ProcesoFirma --> Notificador
-Notificador -->"*" Evento
-class Notificador{
-notificar(Colaborador, Evento evento)
-}
-
-interface Evento{}
-
-Evento <|-- DocumentoCompartido
-Evento <|-- ColaboradorCompletoAccion
-Evento <|-- ProcesoFirmaCulminado
-
-class DocumentoCompartido{}
-
-class ColaboradorCompletoAccion{}
-
-class ProcesoFirmaCulminado{}
-
 Iniciador -->"*" ProcesoFirma
 
 class Iniciador{
-TipoPlan
-ProcesosMensualesDisponibles()
-ProcesoFirma()
+Plan
+ListaProcesosDeFirma
+CantProcesosFirmaMensuales()
+PuedeIniciarProcesoFirma()
+ProcesoFirma(PDF, Orden, ListaColaboradores) //constructor
+Anular(ProcesoFirma)
 }
 
-Plan <|-- Plata
-Plan <|-- Oro
-Plan <|-- Bronce
+Plan <|.. Plata
+Plan <|.. Oro
+Plan <|.. Bronce
 
 Iniciador --> Plan
 interface Plan{
-ProcesosMensualesDisponibles()
+CantProcesosMensualesBase()
 }
 
 class Plata{
@@ -95,7 +99,5 @@ CantProcesosMensualesBase
 class Bronce{
 CantProcesosMensualesBase
 }
-
-
 
 @enduml
