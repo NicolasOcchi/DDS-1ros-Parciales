@@ -3,10 +3,11 @@ class Cuenta{
 email
 medioDePago
 nivel
-medioDeComunicacion
+mediosDeComunicacion
 List<Transferencia> Transferencias
 ListaUltimosMontosProcesados
 estadoCuenta
+notificar()
 enviarTransaccionesPendientes()
 procesarTransaccionesValidadas()
 saldoDisponible()
@@ -97,7 +98,7 @@ solicitarReactivacion(cuenta)
 AdapterBCRA -->"*" Transferencia
 AdapterBCRA -->"*" Cuenta
 
-MedioComunicacion "*"<-- AdapterBCRA
+MedioComunicacion "*"<-- Cuenta
 
 interface MedioComunicacion{
 

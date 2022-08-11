@@ -94,7 +94,7 @@ metodo procesarTransaccionesValidadas(){
     se toman los montos de la listaUltimosMontosProcesados
     se analiza que montos corresponden a que transaccion de la ListaTransacciones
     se actualiza el estado de las transferencias.
-    se notifica al usuario acerca de las transferencias procesadas
+    se notifica al usuario acerca de las transferencias procesadas con el metodo notificar()
 
     si hay 3 transacciones rechazadas consecutivas, cambiar el estado de la cuenta bloqueadaPreventivamente
 
