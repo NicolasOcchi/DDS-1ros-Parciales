@@ -1,0 +1,105 @@
+@startuml
+class Cuenta{
+email
+medioDePago
+nivel
+medioDeComunicacion
+ListaTransferencias
+estadoCuenta
+saldoDisponible()
+listarTransacciones()
+recibir() // desarrolla otro equipo
+enviar(monto, cuenta)
+depositar(monto)
+retirar(monto)
+solicitarReactivacion()
+}
+
+Cuenta --> MedioDePago
+Cuenta <-->"*" Transferencia
+Cuenta --> Nivel
+Cuenta --> EstadoCuenta
+
+interface Nivel{
+descuento()
+}
+
+class Nivel_1 implements Nivel{
+descuento()
+}
+class Nivel_2 implements Nivel{
+descuento()
+}
+class Nivel_3 implements Nivel{
+descuento()
+}
+
+interface MedioDePago{
+enviar(monto, cuenta)
+}
+
+class APIBancariaGenerica implements MedioDePago {
+enviar(monto, cuenta)
+}
+
+class AdapterMercadoPago implements MedioDePago{
+enviar(monto, cuenta)
+}
+AdapterMercadoPago ..> MercadoPagoClient
+
+class MercadoPagoClient{
+boolean send(...)
+}
+
+class Transferencia{
+tiempo
+monto
+remitente
+destinatario
+porcentajeCosto // =2
+costo() // 2% - descuentoXnivel
+montoFinal()
+estadoTransfe
+}
+
+Transferencia --> estadoTransfe
+
+enum estadoTransfe{
+Aprobada
+Pendiente
+Rechazada
+}
+
+interface EstadoCuenta{
+}
+
+class Activa implements EstadoCuenta{}
+class BloqueadaPreventivamente implements EstadoCuenta{}
+class BloqueadaPermanentemente implements EstadoCuenta{}
+
+interface BCRAClient{
+getUserLevel(...)
+List<Boolean> validateTransfer(...)
+sendUnBlockRequest(...)
+}
+
+class AdapterBCRAClient implements BCRAClient{
+solicitarNivelCuenta(ingreso)
+validarTransferencias(cuenta)
+solicitarReactivacion(cuenta)
+}
+
+AdapterBCRAClient -->"*" Transferencia
+AdapterBCRAClient -->"*" Cuenta
+
+MedioComunicacion "*"<-- AdapterBCRAClient
+
+interface MedioComunicacion{
+
+}
+
+class Telegram implements MedioComunicacion{}
+class SMS implements MedioComunicacion{}
+class Email implements MedioComunicacion{}
+
+@enduml
