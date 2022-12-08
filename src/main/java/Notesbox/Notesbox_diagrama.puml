@@ -1,0 +1,82 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Cliente{
+String nombre
+String apellido
+String email
+String direccion
+List<Orden> ordenes
+ordenar(unaCaja)
+}
+
+Cliente -->"*" Orden
+
+class Orden{
+CajaMusical cajita
+String direccionEnvio
+tiempoEstimado()
+precio()
+}
+
+Orden --> CajaMusical
+
+interface CajaMusical{
+precio()
+nombre()
+tiempoEstimado()
+}
+
+class CajaDeCatalogo implements CajaMusical{
+precio()
+nombre()
+tiempoEstimado()
+}
+
+class CajaPersonalizada implements CajaMusical{
+String MIDI
+Validacion validacion
+precio()
+nombre()
+tiempoEstimado()
+marcarComoValida()
+marcarComoInvalida()
+notificar(self, cliente) ??
+}
+
+CajaPersonalizada --> Validacion
+'enum con compartamiento
+enum Validacion{
+VALIDA
+INVALIDA
+marcarComoValida(): Validacion
+marcarComoInvalida(): Validacion
+}
+
+
+interface MIDIConverter{
+string convert(byte[] melody)
+}
+
+class AdapaterMIDIConverter implements MIDIConverter{
+}
+
+AdapaterMIDIConverter --> CajaPersonalizada
+
+
+MailSender -->"*" Cliente
+CajaPersonalizada --> MailSender
+class MailSender{
+send(adress, subject, body)
+}
+
+Fabricante -->"*" CajaMusical
+
+class Fabricante{
+int capacidadProduccion
+List <Orden> ordenesAsignadas
+puedeAceptar(unaCaja)
+asignar(unaCaja)
+}
+
+@enduml

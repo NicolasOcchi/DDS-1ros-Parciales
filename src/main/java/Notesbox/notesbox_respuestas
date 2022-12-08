@@ -1,0 +1,70 @@
+Requerimientos detallados
+1. Como cliente, poder registrarme cargando los datos básicos de contacto (nombre,
+apellido, email) y dirección de recepción de las órdenes.
+
+    class cliente{
+        method Cliente(nombre, apellido, emaiil, direccion)
+        //es un constructor el cual será llamado por la interfaz a la hora de dar de alta al cliente
+    }
+
+2. Como cliente, poder consultar el catálogo de melodías y ordenar una o más cajitas
+musicales para la dirección actual del cliente.
+
+    (...) consultar el catalogo (...) --> es un requerimiento a nivel interfaz/pagina web, sería mas que nada un getter
+
+    (...) ordenar una o mas cajitas (...)
+    var CajitaPrueba = new CajaSimple()
+
+    class cliente{
+        method ordenar(CajitaPrueba){
+            var OrdenInstanciada = new Orden(CajitaPrueba, this.direccion)
+            Ordenes.add(OrdenInstanciada)
+        }
+    }
+
+3. Como cliente, poder consultar el estado de una orden que realicé.
+
+
+4. Como cliente, poder consultar el tiempo estimado que queda hasta que la orden
+llegue a mi dirección.
+
+
+
+5. Como cliente, poder consultar la dirección a la que llegó o llegará una orden que
+realicé, independientemente de cuál sea mi dirección actual
+
+
+
+6. Como persona administradora, poder dar de alta fábricas de cajas musicales en el
+sistema, y actualizarlas cuando sea necesario.
+
+
+
+7. Como persona administradora, poder consultar cuales son las fábricas que podrían
+aceptar una (es decir, que no supere la capacidad de producción de la fabrica).
+
+
+
+8. Como persona administradora, poder revisar (típicamente una o dos veces al día)
+las órdenes pendientes y asignarles una fábrica a su elección que esté en
+condiciones de aceptar la orden
+
+
+9. Como persona administradora, poder consultar todas las órdenes asignadas a una
+fábrica.
+
+
+10. Como cliente, poder realizar una orden personalizada, subiendo el fragmento de
+audio.
+
+
+11. Como cliente, poder saber el precio de una orden, el cual se calcula de forma
+diferente si es de una orden de catálogo o personalizada.
+
+
+12. Como cliente, poder consultar si la orden personalizada fue aceptada o rechazada, y
+recibir una notificación con esta misma información en cuanto el validador de
+secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
+
+13. Como persona administradora, poder listar todas las órdenes, independientemente
+de su tipo y de si la transformación o validación terminó o no
