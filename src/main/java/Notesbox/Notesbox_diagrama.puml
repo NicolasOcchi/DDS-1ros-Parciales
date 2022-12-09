@@ -13,12 +13,15 @@ ordenar(unaCaja)
 Cliente -->"*" Orden
 
 class Orden{
+Date fechaCreacion
 Fabricante fabricante
 CajaMusical cajita
 String direccionEnvio
 tiempoEstimadoFabricacion()
 tiempoEstimadoTotal()
+direccionEnvio(): string
 precio(): int
+estado():
 }
 Orden --> Fabricante
 Orden --> CajaMusical
@@ -40,6 +43,7 @@ reproducir(self)
 class CajaPersonalizada implements CajaMusical{
 String MIDI
 Validacion validacion
+Int longitudMelodia // en segundos
 List<medioDeComunicacion> mediosComunicacion
 precio(): int
 nombre(): string
@@ -48,6 +52,7 @@ marcarComoValida()
 marcarComoInvalida()
 notificar(): void
 reproducir(self)
+cargar(melodia)
 }
 
 CajaPersonalizada --> Validacion
@@ -85,9 +90,11 @@ class Whatsapp implements MedioDeComunicacion{
 Fabricante -->"*" Orden
 
 class Fabricante{
+string nombre
+string direccion
 int capacidadProduccion
 List <Orden> ordenesAsignadas
-puedeAceptar(unaOrden)
+puedeAceptar(unaOrden): boolean
 asignar(unaOrden)
 tiempoFabricacion()
 }
