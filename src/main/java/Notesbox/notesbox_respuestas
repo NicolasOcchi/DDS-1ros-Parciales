@@ -3,32 +3,47 @@ Requerimientos detallados
 apellido, email) y dirección de recepción de las órdenes.
 
     class cliente{
-        method Cliente(nombre, apellido, emaiil, direccion)
+        method Cliente(string nombre, string apellido, string emaiil, string direccion)
         //es un constructor el cual será llamado por la interfaz a la hora de dar de alta al cliente
     }
 
 2. Como cliente, poder consultar el catálogo de melodías y ordenar una o más cajitas
 musicales para la dirección actual del cliente.
 
-    (...) consultar el catalogo (...) --> es un requerimiento a nivel interfaz/pagina web, sería mas que nada un getter
-
+    (...) consultar el catalogo (...)
+    --> es un requerimiento a base de datos/interfaz/pagina web.
+    si es a base de datos es una consulta a un repositorio
+    si es una lista, es hacer un getter de la lista
 
 
     (...) ordenar una o mas cajitas (...)
     var CajitaPrueba = new CajaDeCatalogo()
 
+    CajaDeCatalogo cajitaDeCatalogoPrueba = new CajaDeCatalogo()
+
+    CajaPersonalizada cajitaPersonalizadaPrueba = new CajaPersonalizada()
+    cajitaPersonalizadaPrueba.cargar(melodia)
+
     class cliente{
-        method ordenar(CajitaPrueba){
-            var OrdenInstanciada = new Orden(CajitaPrueba, this.direccion)
+        method ordenar(cajaAOrdenar){
+            var OrdenInstanciada = new Orden(cajaAOrdenar, this.direccion)
             Ordenes.add(OrdenInstanciada)
         }
     }
 
+
 3. Como cliente, poder consultar el estado de una orden que realicé.
 
     class orden{
+        EstadoOrden estado;
 
+        method getEstado(){
+            return this.estado;
+        }
     }
+    // este enum representará el estado de la orden. cuando la orden se crea tendrá el estado de PENDIENTE
+    // y cuando la orden sea entregada pasará a ENTREGADA.
+
 
 4. Como cliente, poder consultar el tiempo estimado que queda hasta que la orden
 llegue a mi dirección.
@@ -36,30 +51,33 @@ llegue a mi dirección.
     var CajitaPrueba = new CajaDeCatalogo()
 
     class orden{
-    CajaMusical cajita = CajitaPrueba;
+        CajaMusical cajita = CajitaPrueba;
         method tiempoEstimadoTotal(){
-            return (tiempoEstimadoFabricacion + cajita.TiempoEstimadoEntrega()) - DiasDesde(fechaCreacion)
+            return (this.tiempoEstimadoFabricacion() + cajita.TiempoEstimadoEntrega()) - this.DiasDesde(fechaCreacion)
+            // devuelve una cantidad de dias
         }
 
         method DiasDesde(fecha){
-            //metodo que devuelve la cantidad de dias que pasaron desde una fecha pasada por parametro
-            // es decir, hago la consulta un sabado, y le paso la fecha del lunes de esa misma semana, y el metodo me devolverá 5 días
-            // que son los que pasaron desde el lunes hasta el sabado (inclusive)
+            // metodo que devuelve la cantidad de dias que pasaron desde una fecha pasada por parámetro
+            // es decir, hago la consulta un sábado, y le paso la fecha del lunes de esa misma semana, y el método me devolverá 5 días
+            // que son los que pasaron desde el lunes hasta el sábado (inclusive)
+            // la operacion sería: (fechaActual - fecha) siendo fechaActual la fecha actual en la que se llamó al metodo
             return int cantDias;
         }
 
+        method tiempoEstimadoFabricacion(){
+            return this.fabricante.tiempoFabricacion() // devuelve una cantidad de dias (int)
+        }
     }
 
     class CajaDeCatalogo inherits cajaMusical{
-        @override
         method tiempoEstimadoEntrega(){
             return 5 // devolvería 5 que serían los dias que indica la consigna que demora una caja de catalogo
         }
     }
 
-    // suponemos que la melodia ya fue aprobada
+    // suponemos que la melodía ya fue aprobada
     class CajaPersonlizada inherits cajaMusical{
-        @override
         method tiempoEstimadoEntrega(){
             return 15 // devolvería 15 que serían los dias que indica la consigna que demora una caja de catalogo
         }
@@ -76,7 +94,7 @@ realicé, independientemente de cuál sea mi dirección actual
             method getDireccioEnvio{
                 return this.direccionEnvio;
             }
-        }
+      }
 
 
 6. Como persona administradora, poder dar de alta fábricas de cajas musicales en el
@@ -93,6 +111,8 @@ sistema, y actualizarlas cuando sea necesario.
             this.capacidadProduccion = capacidadProduccion;
         }
         //es un constructor el cual será llamado por la interfaz a la hora de dar de alta al fabricante.
+
+        //para actualizar los datos, se utilizarán los setters correspondientes
     }
 
 7. Como persona administradora, poder consultar cuales son las fábricas que podrían
@@ -103,8 +123,8 @@ aceptar una (es decir, que no supere la capacidad de producción de la fabrica).
         List <Orden> ordenesAsignadas
 
         method puedeAceptar(unaOrden){
-            return capacidadProduccion >= (length.ordenesAsignadas + 1) // devuelve un booleano
-            //chequeamos que la capacidad de produccion sea mayor o igual a la cantidad de ordenes asignadas + 1
+            return capacidadProduccion >= (size.ordenesAsignadas + 1) // devuelve un booleano
+            // chequeamos que la capacidad de produccion sea mayor o igual a la cantidad de ordenes asignadas + 1
             // ¿porque +1? porque hacemos la comparacion SUPONIENDO QUE le estamos asignando la orden
             // si superamos la capacidad de produccion con la orden en cuestion, el fabricante no podrá hacer la caja musical
         }
@@ -119,14 +139,14 @@ condiciones de aceptar la orden
         List <Orden> ordenesAsignadas
 
         method puedeAceptar(unaOrden){
-           return capacidadProduccion >= (length.ordenesAsignadas + 1) // devuelve un booleano
+           return capacidadProduccion >= (size.ordenesAsignadas + 1) // devuelve un booleano
         }
 
         method asignar(unaOrden){
-            if(!self.puedeAceptar(unaOrden))
-                //lanzar error que el fabricante no está en condicion de aceptar la orden
-
-            ordenesAsignada.add(unaOrden)
+            if(!this.puedeAceptar(unaOrden)){
+                //lanzar error que el fabricante no está en condición de aceptar la orden
+            }
+            ordenesAsignadas.add(unaOrden)
             //se agrega la orden a la lista de ordenes asignadas del fabricante
         }
     }
@@ -147,15 +167,29 @@ fábrica.
 10. Como cliente, poder realizar una orden personalizada, subiendo el fragmento de
 audio.
 
+    CajaPersonalizada cajitaPersonalizadaPrueba = new CajaPersonalizada()
+    cajitaPersonalizadaPrueba.cargar(melodia)
+
     class CajaPersonlizada inherits cajaMusical{
-        method cargar(melodia) ?????????????????????????????????
+    String MIDI //este es la melodia ya convertida
+        method cargar(melodia){
+            AdapterMIDIConverter adapterConversor = new AdapterMIDIConverter()
+            this.MIDI = CadapterConversor.convertir(melodia)
+        }
     }
+
+    class AdapterMIDIConverter{
+        MIDIConverter conversorOriginal = new MIDIConverter()
+        method convertir(melodia){
+            return conversorOriginal.convert(melodia)
+        }
+    }
+
 
 11. Como cliente, poder saber el precio de una orden, el cual se calcula de forma
 diferente si es de una orden de catálogo o personalizada.
 
     class Orden{
-    (...)
     CajaMusical cajita
 
         method precio(){
@@ -163,15 +197,16 @@ diferente si es de una orden de catálogo o personalizada.
         }
     }
 
+    //en las interfaces se pone la firma de los metodos nada mas (nombre y tipo de dato que retornar)
     interface CajaMusical{
         method precio(){
-            (...) //serán redefinidos pos las clases cajaDeCatalogo y cajaPersonalizada
+            (...) //será redefinido por las clases cajaDeCatalogo y cajaPersonalizada
             return int precio;
         }
     }
 
+    // @override ES SOLO PARA LAS CLASES ABSTRACTAS
     class CajaDeCatalogo inherits cajaMusical{
-        @override
         method precio(){
             return X; //precio predefinido para las melodias de catalogo
             // devuelve un entero
@@ -181,7 +216,7 @@ diferente si es de una orden de catálogo o personalizada.
     class CajaPersonlizada inherits cajaMusical{
         int longitudMelodia; // en segundos
         int valorDelSegundo; // un precio arbitrario que tendra cada segundo de reproduccion de la melodia
-        @override
+
         method precio(){
             return longitudMelodia * valorDelSegundo;
             // devuelve el int
@@ -192,8 +227,10 @@ diferente si es de una orden de catálogo o personalizada.
 recibir una notificación con esta misma información en cuanto el validador de
 secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
 
+    // si lo ponemos en la orden, estamos dando lugar a que las ordenes de caja de catalogo sean aceptadas o rechazadas.
+
     class CajaPersonlizada inherits cajaMusical{
-        (...)
+        Cliente cliente
         Validacion validacion
         List<medioDeComunicacion> mediosComunicacion
 
@@ -202,7 +239,7 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
             return this.validacion //devuelve el enum validacion
         }
 
-        //para manejar las notificaciones de las validaciones decidimos usar el patron oberserver.
+        // para manejar las notificaciones de las validaciones decidimos usar el patron oberserver.
         // cuando el usuario valida o invalida una melodia personalizada utiliza los metodos marcarComoValida() y marcarComoInvalida() respectivamente
         // dichos metodos cambian el estado de la caja personalizada y a su vez llaman al meotodo notificar el cual sirve como punto de entrada
         // para enviar las notificaciones mediante los medios de comunicacion, es decir, es quien le da el pie a los observadores para enviar las notificaciones
@@ -218,20 +255,28 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
         }
 
         method notificar(){
-            mediosComunicacion.forEach(mC -> mC.recibirNotificacion())
+            mediosComunicacion.forEach(mC -> mC.recibirNotificacion(cliente, validacion))
+            // le pasamos la validacion para saber que le tenemos que notificar al cliente (si es valida o invalida)
         }
     }
 
     interface MediosDeComunicacion{
-        method recibirNotificacion(){
+        method recibirNotificacion(cliente, validacion){
             (...)
         }
     }
 
     class MailSender{
-        (...)
+        method recibirNotificacion(cliente, validacion){
+            this.send(cliente.email , 'Su orden ha sido validada', validacion)
+        }
+
+        method send(adress, subject, body){
+            (...)
+        }
     }
 
 13. Como persona administradora, poder listar todas las órdenes, independientemente
 de su tipo y de si la transformación o validación terminó o no
 
+    ¿consulta a la base de datos?

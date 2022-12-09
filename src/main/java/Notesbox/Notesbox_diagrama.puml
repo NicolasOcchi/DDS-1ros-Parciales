@@ -7,24 +7,32 @@ String apellido
 String email
 String direccion
 List<Orden> ordenes
-ordenar(unaCaja)
+ordenar(unaCaja): void
 }
 
 Cliente -->"*" Orden
 
 class Orden{
+Cliente cliente
 Date fechaCreacion
 Fabricante fabricante
 CajaMusical cajita
 String direccionEnvio
-tiempoEstimadoFabricacion()
-tiempoEstimadoTotal()
+EstadoOrden estado
+tiempoEstimadoFabricacion(): int
+tiempoEstimadoTotal(): int
 direccionEnvio(): string
 precio(): int
-estado():
+getEstadoOrden(): EstadoOrden
 }
 Orden --> Fabricante
 Orden --> CajaMusical
+Orden --> EstadoOrden
+
+enum EstadoOrden{
+    PENDIENTE
+    ENTREGADO
+}
 
 interface CajaMusical{
 precio(): int
@@ -41,6 +49,7 @@ reproducir(self)
 }
 
 class CajaPersonalizada implements CajaMusical{
+Cliente cliente
 String MIDI
 Validacion validacion
 Int longitudMelodia // en segundos
@@ -52,10 +61,12 @@ marcarComoValida()
 marcarComoInvalida()
 notificar(): void
 reproducir(self)
-cargar(melodia)
+cargar(melodia): void
 }
 
 CajaPersonalizada --> Validacion
+CajaPersonalizada --> Orden
+
 'enum con compartamiento
 enum Validacion{
 VALIDA
@@ -76,15 +87,17 @@ CajaPersonalizada --> AdapaterMIDIConverter
 CajaPersonalizada -->"*" MedioDeComunicacion
 
 interface MedioDeComunicacion{
-    recibirNotificacion()
+    recibirNotificacion(validacion)
 }
 
 class MailSender implements MedioDeComunicacion{
 send(adress, subject, body)
+recibirNotificacion(validacion)
 }
 
 class Whatsapp implements MedioDeComunicacion{
 (...)
+recibirNotificacion(validacion)
 }
 
 Fabricante -->"*" Orden
@@ -96,7 +109,8 @@ int capacidadProduccion
 List <Orden> ordenesAsignadas
 puedeAceptar(unaOrden): boolean
 asignar(unaOrden)
-tiempoFabricacion()
+tiempoFabricacion(): int
+getOrdenesAsignadas(): orden
 }
 
 @enduml
