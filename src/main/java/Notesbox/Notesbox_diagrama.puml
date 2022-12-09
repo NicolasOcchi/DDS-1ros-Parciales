@@ -13,35 +13,41 @@ ordenar(unaCaja)
 Cliente -->"*" Orden
 
 class Orden{
+Fabricante fabricante
 CajaMusical cajita
 String direccionEnvio
-tiempoEstimado()
-precio()
+tiempoEstimadoFabricacion()
+tiempoEstimadoTotal()
+precio(): int
 }
-
+Orden --> Fabricante
 Orden --> CajaMusical
 
 interface CajaMusical{
-precio()
-nombre()
-tiempoEstimado()
+precio(): int
+nombre(): string
+tiempoEntregaEstimado(): date
+reproducir(self)
 }
 
 class CajaDeCatalogo implements CajaMusical{
-precio()
-nombre()
-tiempoEstimado()
+precio(): int
+nombre(): string
+tiempoEntregaEstimado(): date
+reproducir(self)
 }
 
 class CajaPersonalizada implements CajaMusical{
 String MIDI
 Validacion validacion
-precio()
-nombre()
-tiempoEstimado()
+List<medioDeComunicacion> mediosComunicacion
+precio(): int
+nombre(): string
+tiempoEntregaEstimado(): date
 marcarComoValida()
 marcarComoInvalida()
-notificar(self, cliente) ??
+notificar(): void
+reproducir(self)
 }
 
 CajaPersonalizada --> Validacion
@@ -53,30 +59,37 @@ marcarComoValida(): Validacion
 marcarComoInvalida(): Validacion
 }
 
-
 interface MIDIConverter{
 string convert(byte[] melody)
 }
 
 class AdapaterMIDIConverter implements MIDIConverter{
+    convertir(melodia)
 }
 
-AdapaterMIDIConverter --> CajaPersonalizada
+CajaPersonalizada --> AdapaterMIDIConverter
+CajaPersonalizada -->"*" MedioDeComunicacion
 
+interface MedioDeComunicacion{
+    recibirNotificacion()
+}
 
-MailSender -->"*" Cliente
-CajaPersonalizada --> MailSender
-class MailSender{
+class MailSender implements MedioDeComunicacion{
 send(adress, subject, body)
 }
 
-Fabricante -->"*" CajaMusical
+class Whatsapp implements MedioDeComunicacion{
+(...)
+}
+
+Fabricante -->"*" Orden
 
 class Fabricante{
 int capacidadProduccion
 List <Orden> ordenesAsignadas
-puedeAceptar(unaCaja)
-asignar(unaCaja)
+puedeAceptar(unaOrden)
+asignar(unaOrden)
+tiempoFabricacion()
 }
 
 @enduml
