@@ -11,18 +11,18 @@ apellido, email) y dirección de recepción de las órdenes.
 musicales para la dirección actual del cliente.
 
     (...) consultar el catalogo (...)
-    --> es un requerimiento a base de datos/interfaz/pagina web.
-    si es a base de datos es una consulta a un repositorio
-    si es una lista, es hacer un getter de la lista
+    por como modelamos las melodías, estas mismas podrían estar dentro de uan colección y hacer un get para poder
+    mostrarlas por pantallas.
+    Si es una lista, es hacer un getter de la lista
 
 
     (...) ordenar una o mas cajitas (...)
     var CajitaPrueba = new CajaDeCatalogo()
 
-    CajaDeCatalogo cajitaDeCatalogoPrueba = new CajaDeCatalogo()
+    MelodiaDeCatalogo melodiaDeCatalogoPrueba = new MelodiaDeCatalogo()
 
-    CajaPersonalizada cajitaPersonalizadaPrueba = new CajaPersonalizada()
-    cajitaPersonalizadaPrueba.cargar(melodia)
+    MelodiaPersonalizada melodiaPersonalizadaPrueba = new MelodiaPersonalizada()
+    melodiaPersonalizadaPrueba.cargar(melodia)
 
     class cliente{
         method ordenar(cajaAOrdenar){
@@ -70,14 +70,22 @@ llegue a mi dirección.
         }
     }
 
-    class CajaDeCatalogo inherits cajaMusical{
+    class Caja{
+        Melodia melodia;
+
+        method tiempoEstimadoEntrega(){
+            return this.melodia.tiempoEstimadoEntrega(); //devolvería la cantidad de dias
+        }
+    }
+
+    class MelodiaDeCatalogo inherits Melodia{
         method tiempoEstimadoEntrega(){
             return 5 // devolvería 5 que serían los dias que indica la consigna que demora una caja de catalogo
         }
     }
 
     // suponemos que la melodía ya fue aprobada
-    class CajaPersonlizada inherits cajaMusical{
+    class MelodiaPersonlizada inherits Melodia{
         method tiempoEstimadoEntrega(){
             return 15 // devolvería 15 que serían los dias que indica la consigna que demora una caja de catalogo
         }
@@ -167,10 +175,7 @@ fábrica.
 10. Como cliente, poder realizar una orden personalizada, subiendo el fragmento de
 audio.
 
-    CajaPersonalizada cajitaPersonalizadaPrueba = new CajaPersonalizada()
-    cajitaPersonalizadaPrueba.cargar(melodia)
-
-    class CajaPersonlizada inherits cajaMusical{
+    class MelodiaPersonlizada inherits Melodia{
     String MIDI //este es la melodia ya convertida
         method cargar(melodia){
             AdapterMIDIConverter adapterConversor = new AdapterMIDIConverter()
@@ -197,8 +202,16 @@ diferente si es de una orden de catálogo o personalizada.
         }
     }
 
+    class Caja{
+        Melodia melodia
+
+        method precio(){
+            this.melodia.precio();
+        }
+    }
+
     //en las interfaces se pone la firma de los metodos nada mas (nombre y tipo de dato que retornar)
-    interface CajaMusical{
+    interface Melodia{
         method precio(){
             (...) //será redefinido por las clases cajaDeCatalogo y cajaPersonalizada
             return int precio;
@@ -206,14 +219,14 @@ diferente si es de una orden de catálogo o personalizada.
     }
 
     // @override ES SOLO PARA LAS CLASES ABSTRACTAS
-    class CajaDeCatalogo inherits cajaMusical{
+    class MelodiaDeCatalogo inherits Melodia{
         method precio(){
             return X; //precio predefinido para las melodias de catalogo
             // devuelve un entero
         }
     }
 
-    class CajaPersonlizada inherits cajaMusical{
+    class MelodiaPersonlizada inherits Melodia{
         int longitudMelodia; // en segundos
         int valorDelSegundo; // un precio arbitrario que tendra cada segundo de reproduccion de la melodia
 
@@ -229,8 +242,7 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
 
     // si lo ponemos en la orden, estamos dando lugar a que las ordenes de caja de catalogo sean aceptadas o rechazadas.
 
-    class CajaPersonlizada inherits cajaMusical{
-        Cliente cliente
+    class MelodiaPersonlizada inherits Melodia{
         Validacion validacion
         List<medioDeComunicacion> mediosComunicacion
 
@@ -255,20 +267,20 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
         }
 
         method notificar(){
-            mediosComunicacion.forEach(mC -> mC.recibirNotificacion(cliente, validacion))
+            mediosComunicacion.forEach(mC -> mC.recibirNotificacion(cliente, getValidacion()))
             // le pasamos la validacion para saber que le tenemos que notificar al cliente (si es valida o invalida)
         }
     }
 
     interface MediosDeComunicacion{
-        method recibirNotificacion(cliente, validacion){
+        method recibirNotificacion(Remitente, Mensaje){
             (...)
         }
     }
 
     class MailSender{
-        method recibirNotificacion(cliente, validacion){
-            this.send(cliente.email , 'Su orden ha sido validada', validacion)
+        method recibirNotificacion(email, mensaje){
+            this.send(email , 'Su orden ha sido validada', mensaje)
         }
 
         method send(adress, subject, body){
@@ -279,4 +291,7 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
 13. Como persona administradora, poder listar todas las órdenes, independientemente
 de su tipo y de si la transformación o validación terminó o no
 
-    ¿consulta a la base de datos?
+    Por como modelamos las ordenes, estas mismas podrian estar dentro de uan coleccion y hacer un get para poder
+    mostrarlas por pantallas.
+
+    Descartamos que haya otro objeto el cual contenga las ordenes ya que el enunciado no lo tiene como requerimiento

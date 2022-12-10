@@ -2,31 +2,31 @@
 'https://plantuml.com/class-diagram
 
 class Cliente{
-String nombre
-String apellido
-String email
-String direccion
-List<Orden> ordenes
-ordenar(unaCaja): void
+    String nombre
+    String apellido
+    String email
+    String direccion
+    List<Orden> ordenes
+    ordenar(unaCaja): void
 }
 
 Cliente -->"*" Orden
 
 class Orden{
-Cliente cliente
-Date fechaCreacion
-Fabricante fabricante
-CajaMusical cajita
-String direccionEnvio
-EstadoOrden estado
-tiempoEstimadoFabricacion(): int
-tiempoEstimadoTotal(): int
-direccionEnvio(): string
-precio(): int
-getEstadoOrden(): EstadoOrden
+    Cliente cliente
+    Date fechaCreacion
+    Fabricante fabricante
+    Caja cajita
+    String direccionEnvio
+    EstadoOrden estado
+    tiempoEstimadoFabricacion(): int
+    tiempoEstimadoTotal(): int
+    direccionEnvio(): string
+    precio(): int
+    getEstadoOrden(): EstadoOrden
 }
+Orden --> Caja
 Orden --> Fabricante
-Orden --> CajaMusical
 Orden --> EstadoOrden
 
 enum EstadoOrden{
@@ -34,45 +34,50 @@ enum EstadoOrden{
     ENTREGADO
 }
 
-interface CajaMusical{
-precio(): int
-nombre(): string
-tiempoEntregaEstimado(): date
-reproducir(self)
+
+class Caja{
+    Melodia melodia
+    precio(): int
+    tiempoEntregaEstimado(): date
 }
 
-class CajaDeCatalogo implements CajaMusical{
-precio(): int
-nombre(): string
-tiempoEntregaEstimado(): date
-reproducir(self)
+Caja --> Melodia
+
+
+interface Melodia{
+    precio(): int
+    nombre(): string
+    tiempoEntregaEstimado(): date
 }
 
-class CajaPersonalizada implements CajaMusical{
-Cliente cliente
-String MIDI
-Validacion validacion
-Int longitudMelodia // en segundos
-List<medioDeComunicacion> mediosComunicacion
-precio(): int
-nombre(): string
-tiempoEntregaEstimado(): date
-marcarComoValida()
-marcarComoInvalida()
-notificar(): void
-reproducir(self)
-cargar(melodia): void
+class MelodiaDeCatalogo implements Melodia{
+    precio(): int
+    nombre(): string
+    tiempoEntregaEstimado(): date
 }
 
-CajaPersonalizada --> Validacion
-CajaPersonalizada --> Orden
+class MelodiaPersonalizada implements Melodia{
+    String MIDI
+    Validacion validacion
+    Int longitudMelodia // en segundos
+    List<medioDeComunicacion> mediosComunicacion
+    precio(): int
+    nombre(): string
+    tiempoEntregaEstimado(): date
+    marcarComoValida()
+    marcarComoInvalida()
+    notificar(): void
+    cargar(melodia): void
+}
+
+MelodiaPersonalizada --> Validacion
 
 'enum con compartamiento
 enum Validacion{
-VALIDA
-INVALIDA
-marcarComoValida(): Validacion
-marcarComoInvalida(): Validacion
+    VALIDA
+    INVALIDA
+    marcarComoValida(): Validacion
+    marcarComoInvalida(): Validacion
 }
 
 interface MIDIConverter{
@@ -83,34 +88,34 @@ class AdapaterMIDIConverter implements MIDIConverter{
     convertir(melodia)
 }
 
-CajaPersonalizada --> AdapaterMIDIConverter
-CajaPersonalizada -->"*" MedioDeComunicacion
+MelodiaPersonalizada --> AdapaterMIDIConverter
+MelodiaPersonalizada -->"*" MedioDeComunicacion
 
 interface MedioDeComunicacion{
-    recibirNotificacion(validacion)
+    recibirNotificacion(Remitente, Mensaje)
 }
 
 class MailSender implements MedioDeComunicacion{
-send(adress, subject, body)
-recibirNotificacion(validacion)
+    send(adress, subject, body)
+    recibirNotificacion(Remitente, Mensaje)
 }
 
 class Whatsapp implements MedioDeComunicacion{
-(...)
-recibirNotificacion(validacion)
+    (...)
+    recibirNotificacion(Remitente, Mensaje)
 }
 
 Fabricante -->"*" Orden
 
 class Fabricante{
-string nombre
-string direccion
-int capacidadProduccion
-List <Orden> ordenesAsignadas
-puedeAceptar(unaOrden): boolean
-asignar(unaOrden)
-tiempoFabricacion(): int
-getOrdenesAsignadas(): orden
+    string nombre
+    string direccion
+    int capacidadProduccion
+    List <Orden> ordenesAsignadas
+    puedeAceptar(unaOrden): boolean
+    asignar(unaOrden)
+    tiempoFabricacion(): int
+    getOrdenesAsignadas(): orden
 }
 
 @enduml
