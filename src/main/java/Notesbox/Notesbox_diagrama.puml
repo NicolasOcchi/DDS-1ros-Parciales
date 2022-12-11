@@ -58,6 +58,7 @@ class MelodiaDeCatalogo implements Melodia{
 
 class MelodiaPersonalizada implements Melodia{
     String MIDI
+    MP3 Melodia // melodia cargada por el usuario
     Validacion validacion
     Int longitudMelodia // en segundos
     List<medioDeComunicacion> mediosComunicacion
@@ -68,6 +69,7 @@ class MelodiaPersonalizada implements Melodia{
     marcarComoInvalida()
     notificar(): void
     cargar(melodia): void
+    convertir(): string
 }
 
 MelodiaPersonalizada --> Validacion
@@ -91,18 +93,25 @@ class AdapaterMIDIConverter implements MIDIConverter{
 MelodiaPersonalizada --> AdapaterMIDIConverter
 MelodiaPersonalizada -->"*" MedioDeComunicacion
 
+class Planificador{
+    encolarConversiones(MelodiaPersonalizada)
+    procesorConversiones()
+}
+
+Planificador -->"*" MelodiaPersonalizada
+
 interface MedioDeComunicacion{
-    recibirNotificacion(Remitente, Mensaje)
+    recibirNotificacion(destinatario, Mensaje)
 }
 
 class MailSender implements MedioDeComunicacion{
     send(adress, subject, body)
-    recibirNotificacion(Remitente, Mensaje)
+    recibirNotificacion(destinatario, Mensaje)
 }
 
 class Whatsapp implements MedioDeComunicacion{
     (...)
-    recibirNotificacion(Remitente, Mensaje)
+    recibirNotificacion(destinatario, Mensaje)
 }
 
 Fabricante -->"*" Orden

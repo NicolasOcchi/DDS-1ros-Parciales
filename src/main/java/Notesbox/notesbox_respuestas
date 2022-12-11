@@ -1,3 +1,29 @@
+
+** PARA EL PLANIFICADOR **
+class Planificador{
+    List<MelodiaPersonalizada> melodiasAConvertir;
+
+    method encolarConversiones(MelodiaPersonalizada melodia){
+        melodiasAConvertir.add(melodia)
+    }
+
+    method procesarConversiones(){
+        melodiasAConvertir.forEach(melodia -> melodia.convertir())
+        melodiasAConvertir.clear
+    }
+}
+
+class MelodiaPersonalizada{
+    String MIDI
+    MP3 Melodia // melodia cargada por el usuario
+    AdapterMIDIConverter HarramientaDeConversion;
+
+    method convertir(){
+        this.MIDI = HarramientaDeConversion.convertir(this.melodia);
+    }
+}
+
+
 Requerimientos detallados
 1. Como cliente, poder registrarme cargando los datos básicos de contacto (nombre,
 apellido, email) y dirección de recepción de las órdenes.
@@ -273,7 +299,7 @@ secuencias termine de ejecutarse. Soportar múltiples formas de notificación.
     }
 
     interface MediosDeComunicacion{
-        method recibirNotificacion(Remitente, Mensaje){
+        method recibirNotificacion(destinatariodestinatario, Mensaje){
             (...)
         }
     }

@@ -1,0 +1,118 @@
+1)
+realizo un builder
+
+CuentaBuilder.
+    .new
+    .ingreso
+    .medioDePago(MedioDePago)
+    .build
+
+al crear la cuenta se calcula el nivel teniendo en cuenta el ingreso declarado
+
+2)
+desde Cuenta se llama al metodo recalcularNivel(nuevoIngreso) dicho metodo envia un mensaje al
+adapterBCRAClient el cual busca ejecutar el metodo solicitarNivelCuenta con el parametro "nuevoIngreso".
+
+<<Cuenta>>
+metodo recalcularNivel(nuevoIngreso){
+    actulizarIngreso(nuevoIngreso)
+    nivel = BCRA.solicitarNivelCuenta(nuevoIngreso)
+}
+
+
+3)
+desde Cuenta se llamaría a retirar(monto) o depositar(monto) segun corresponda
+
+<<Cuenta>>
+metodo retirar(monto){
+    if(monto >= saldoDisponible()){
+        error...
+    }
+    actualizar el saldoDisponible descontando el monto retirado
+}
+metodo depositar(monto){
+    se actualiza el saldoDisponible sumando el monto a depositar
+}
+
+4)
+<<Cuenta>>
+metodo enviar(monto, cuenta){
+    if(estaBloqueada()){
+        error...
+    }
+    if(monto > saldoDisponible())[
+        error...
+    }
+    se crea una nueva transaccion con:
+        - el remitente como el usuario que llama al metodo enviar
+        - el destinatario el parametro "cuenta"
+        - el monto como el parametro monto
+        - se asigna el estado Pendiente a la transaccion
+        - se guarda la fecha
+        - se calcula el costo de la transferencia teniendo en cuenta el nivel del usuario remitente
+
+    se agregar la transaccion recien creada a la lista de transacciones del usuario
+}
+
+
+5)
+<<Cuenta>>
+metodo saldoBloqueado{
+    filtrar las transacciones pendientes del ListaTransacciones
+    sumar montoFinal() de las transacciones filtradas
+    retorna total de la suma
+}
+
+6)
+<<Cuenta>>
+meotod saldoDisponible(){
+    if(estaBloqueada()){
+        error... ya que si esta bloqueada no tiene saldo para operar
+    }
+    filtrar las transacciones realizadas del ListaTransacciones
+    sumar montoFinal() de las transacciones filtradas
+    retornar total de suma
+}
+
+7)
+<<Cuenta>>
+metodo listarTransacciones(){
+    listar todas las transacciones del usuario que llama el metodo, ya sea pendientes, aprobadas o rechazadas.
+}
+
+8)
+<<Cuenta>>
+El método enviarTransaccionesPendientes servirá como punto de entrada a un crontab (desde un main) o a un timer
+que se disparará a ciertas horas.
+
+metodo enviarTransaccionesPendientes(){
+    se filtran las transacciones pendientes de la ListaTransacciones
+    se envian dichas transacciones al AdapterBRCA bajo el metodo ValidarTransacciones(Cuenta, ListaMontos)
+}
+
+metodo procesarTransaccionesValidadas(){
+    se toman los montos de la listaUltimosMontosProcesados
+    se analiza que montos corresponden a que transaccion de la ListaTransacciones
+    se actualiza el estado de las transferencias.
+    se notifica al usuario acerca de las transferencias procesadas con el metodo notificar()
+
+    si hay 3 transacciones rechazadas consecutivas, cambiar el estado de la cuenta bloqueadaPreventivamente
+
+    se limpia la listaUltimosMontosProcesados
+}
+
+<<AdapterBCRA>>
+metodo validarTransferencias(Cuenta, ListaMontos){
+    llama al metodo validateTransfer(...)
+    al recebir las transferencias validadas llama al metodo enviarTransferenciaValidadas(Cuenta, ListaMontos)
+}
+
+9)
+desde usuario se llama al metodo solicitarReactivacion(motivo) el cual envia un mensaje al adapterBCRAClient
+que busca ejecutar el metodo solicitarReactivacion(cuenta, motivo) donde el parametro cuenta será la cuenta
+que llamó el primer metodo.
+
+<<Cuenta>>
+metodo solicitarReactivacion(motivo){
+    BCRA.solicitarReactivacion(self, motivo)
+}

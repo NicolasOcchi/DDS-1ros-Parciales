@@ -1,0 +1,117 @@
+@startuml
+class Cuenta{
+    String email
+    medioDePago?????
+    Nivel nivel
+    mediosDeComunicacion????
+    List<Transferencia> Transferencias
+    ListaUltimosMontosProcesados????
+    EstadoCuenta estadoCuenta
+    notificar(): void
+    enviarTransaccionesPendientes(): void
+    procesarTransaccionesValidadas(): void
+    saldoDisponible(): double
+    listarTransacciones(): void
+    procesarTransaccionesPendientes(): void
+    enviar(monto, cuenta): void
+    depositar(monto): void
+    retirar(monto): void
+    solicitarReactivacion()
+
+    recibir() // desarrolla otro equipo
+
+
+    getNivelCuenta(ingreso)
+}
+
+Cuenta --> MedioDePago
+Cuenta <-->"*" Transferencia
+Cuenta --> Nivel
+Cuenta --> EstadoCuenta
+
+'se crearán 3 instancias, 1 por cada nivel con su respectivo porcentaje
+class Nivel{
+    double porcentajeDescuento
+    descuento(dinero): double
+}
+
+interface MedioDePago{
+    enviar(monto, cuenta)
+}
+
+class APIBancariaGenerica implements MedioDePago {
+    enviar(monto, cuenta)
+}
+
+class AdapterMercadoPago implements MedioDePago{
+    enviar(monto, cuenta)
+}
+AdapterMercadoPago ..> MercadoPagoClient
+
+class MercadoPagoClient{
+    send(...): boolean
+}
+
+class Transferencia{
+    Date fecha
+    double monto
+    Cuenta remitente
+    Cuenta destinatario
+    double porcentajeCosto // =2
+    EstadoTransfe EstadoTransfe
+
+    costo(): double // 2% - descuentoXnivel
+    montoFinal(): double
+    aceptar(): void
+    rechazar(): void
+    notificar(EstadoTransfe): void
+    getEstado(): EstadoTransfe
+}
+
+Transferencia --> EstadoTransfe
+
+enum EstadoTransfe{
+    APROBADA
+    PENDIENTE
+    RECHAZADA
+}
+
+enum EstadoCuenta{
+ACTIVA
+BLOQUEADA_PREVENTIVAMENTE
+BLOQUEADA_PERMANENTEMENTE
+}
+
+interface BCRAClient{
+    getUserLevel(...): string
+    List<Boolean> validateTransfer(...)
+    sendUnblockRequest(...): boolean
+}
+
+class AdapterBCRA implements BCRAClient{
+    solicitarNivelCuenta(ingreso)
+    validarTransferencias(Cuenta, ListaMontos)
+    enviarTransferenciaValidadas(Cuenta, ListaMontos)
+    solicitarReactivacion(cuenta)
+}
+
+AdapterBCRA -->"*" Transferencia
+AdapterBCRA -->"*" Cuenta
+
+MedioComunicacion "*"<-- Cuenta
+
+interface MedioComunicacion{
+    recibirNotificacion(remitente, mensaje)
+}
+
+class Telegram implements MedioComunicacion{
+    recibirNotificacion(destinatario, mensaje)
+}
+class SMS implements MedioComunicacion{
+    recibirNotificacion(destinatario, mensaje)
+}
+class Email implements MedioComunicacion{
+    recibirNotificacion(destinatario, mensaje)
+}
+
+@enduml
