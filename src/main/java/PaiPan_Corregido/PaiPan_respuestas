@@ -1,66 +1,110 @@
 1)
-realizo un builder
 
-CuentaBuilder.
-    .new
-    .ingreso
-    .medioDePago(MedioDePago)
-    .build
+class Cuenta{
+    String nombre;
+    String email;
+    Double ingreso;
+    MedioDePago medioDePago;
+    EstadoCuenta estadoCuenta;
+    Nivel nivel;
+    AdapterBCRA BancoCentral;
 
-al crear la cuenta se calcula el nivel teniendo en cuenta el ingreso declarado
+    method Cuenta(string nombre, string email, MedioDePago medioDePago, double ingreso){
+        this.nombre = nombre;
+        this.email = email;
+        this.medioDePago = medioDePago;
+        this.estadoCuenta = ACTIVA;
+        this.ingreso = ingreso;
+        this.nivel = this.getNivelCuenta(ingreso);
+        // se llama al constructor cuando se quiera instanciar una cuenta nueva
+    }
 
-2)
-desde Cuenta se llama al metodo recalcularNivel(nuevoIngreso) dicho metodo envia un mensaje al
-adapterBCRAClient el cual busca ejecutar el metodo solicitarNivelCuenta con el parametro "nuevoIngreso".
-
-<<Cuenta>>
-metodo recalcularNivel(nuevoIngreso){
-    actulizarIngreso(nuevoIngreso)
-    nivel = BCRA.solicitarNivelCuenta(nuevoIngreso)
+    method getNivelCuenta(ingreso){
+       return this.BancoCentral.solicitarNivelCuenta(ingreso) //devuelve un entero que será el nivel
+    }
 }
 
+AdapterBCRA{
+    BCRAClient BCRAOriginal;
+
+    method solicitarNivelCuenta(ingreso){
+        return BCRAOriginal.getUserLevel(ingreso); //devuelve un entero que es el nivel
+    }
+}
+
+
+2)
+
+class Cuenta{
+    method recalcularNivel(nuevoIngreso){
+        this.setIngreso(nuevoIngreso)
+        this.nivel = BancoCentral.solicitarNivelCuenta(nuevoIngreso);
+    }
+}
+
+// AdapterBCRA y BCRAClient explicados en el anterior punto
 
 3)
 desde Cuenta se llamaría a retirar(monto) o depositar(monto) segun corresponda
 
-<<Cuenta>>
-metodo retirar(monto){
-    if(monto >= saldoDisponible()){
-        error...
+class Cuenta{
+    double monto;
+
+    method retirar(monto){
+        if(this.monto >= this.saldoDisponible()){
+            error...
+        }
+        this.saldo =- monto;
     }
-    actualizar el saldoDisponible descontando el monto retirado
-}
-metodo depositar(monto){
-    se actualiza el saldoDisponible sumando el monto a depositar
+    method depositar(monto){
+        this.saldo =+ monto;
+    }
 }
 
 4)
-<<Cuenta>>
-metodo enviar(monto, cuenta){
-    if(estaBloqueada()){
-        error...
-    }
-    if(monto > saldoDisponible())[
-        error...
-    }
-    se crea una nueva transaccion con:
-        - el remitente como el usuario que llama al metodo enviar
-        - el destinatario el parametro "cuenta"
-        - el monto como el parametro monto
-        - se asigna el estado Pendiente a la transaccion
-        - se guarda la fecha
-        - se calcula el costo de la transferencia teniendo en cuenta el nivel del usuario remitente
+class Cuenta{
+    EstadoCuenta estadoCuenta;
+    List<Transferencia> transferencias
 
-    se agregar la transaccion recien creada a la lista de transacciones del usuario
+    method enviar(double monto, Cuenta destinatario){
+        if(this.estaBloqueada()){
+            //lanzar error de cuenta bloqueada.
+        }
+        if(monto > this.saldoDisponible())[
+            //lanzar error de saldo insuficiente.
+        }
+
+        //¿es necesario chequear que la otra cuenta está bloqueada?
+
+        //utilizamos el constructor de la transferencia...
+        Transferencia transferenciaNueva = new Transferencia(self, destinatario, monto, Pendiente, this.getFechaActual())
+
+        this.transferencias.add(transferenciaNueva);
+        // tambien se agrega  la transferencia recien creada a la lista de transacciones del destinatario
+        destinatario.transferencias.add(transferenciaNueva);
+    }
+
+    method estaBloqueada(){ //retorna un booleano
+        if(this.estadoCuenta == Activa){
+            return false
+        }
+        else{
+            return true
+        }
+    }
 }
 
 
+
 5)
-<<Cuenta>>
-metodo saldoBloqueado{
-    filtrar las transacciones pendientes del ListaTransacciones
-    sumar montoFinal() de las transacciones filtradas
-    retorna total de la suma
+class Cuenta{
+    List<Transferencia> transferencias
+
+    method saldoBloqueado(){
+        transferenciasPendientes = transferencias.filter({ transferencia -> transferencia.estaPendiente()})
+        montosTotales = transferenciasPendientes.map({transferencia -> transferencia.montoFinal()})
+        retunr montosTotales.sum() // retorna un double que sería el saldo bloqueado.
+    }
 }
 
 6)

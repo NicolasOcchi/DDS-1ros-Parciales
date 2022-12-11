@@ -1,9 +1,10 @@
 @startuml
 class Cuenta{
     String email
-    medioDePago?????
+    MedioDePago medioDePago
     Nivel nivel
-    mediosDeComunicacion????
+    Double ingreso
+    List<MedioComunicacion> mediosDeComunicacion
     List<Transferencia> Transferencias
     ListaUltimosMontosProcesados????
     EstadoCuenta estadoCuenta
