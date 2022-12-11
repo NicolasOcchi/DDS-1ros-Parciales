@@ -1,5 +1,5 @@
+---------------------------------------------------------------------------------------------------------------
 1)
-
 class Cuenta{
     String nombre;
     String email;
@@ -15,11 +15,11 @@ class Cuenta{
         this.medioDePago = medioDePago;
         this.estadoCuenta = ACTIVA;
         this.ingreso = ingreso;
-        this.nivel = this.getNivelCuenta(ingreso);
+        this.nivel = this.calcularNivelCuenta(ingreso);
         // se llama al constructor cuando se quiera instanciar una cuenta nueva
     }
 
-    method getNivelCuenta(ingreso){
+    method calcularNivelCuenta(ingreso){
        return this.BancoCentral.solicitarNivelCuenta(ingreso) //devuelve un entero que será el nivel
     }
 }
@@ -32,18 +32,17 @@ AdapterBCRA{
     }
 }
 
-
+---------------------------------------------------------------------------------------------------------------
 2)
-
 class Cuenta{
     method recalcularNivel(nuevoIngreso){
         this.setIngreso(nuevoIngreso)
-        this.nivel = BancoCentral.solicitarNivelCuenta(nuevoIngreso);
+        this.nivel = calcularNivelCuenta(nuevoIngreso);
     }
 }
 
 // AdapterBCRA y BCRAClient explicados en el anterior punto
-
+---------------------------------------------------------------------------------------------------------------
 3)
 desde Cuenta se llamaría a retirar(monto) o depositar(monto) segun corresponda
 
@@ -60,7 +59,7 @@ class Cuenta{
         this.saldo =+ monto;
     }
 }
-
+---------------------------------------------------------------------------------------------------------------
 4)
 class Cuenta{
     EstadoCuenta estadoCuenta;
@@ -95,7 +94,7 @@ class Cuenta{
 }
 
 
-
+---------------------------------------------------------------------------------------------------------------
 5)
 class Cuenta{
     List<Transferencia> transferencias
@@ -103,26 +102,34 @@ class Cuenta{
     method saldoBloqueado(){
         transferenciasPendientes = transferencias.filter({ transferencia -> transferencia.estaPendiente()})
         montosTotales = transferenciasPendientes.map({transferencia -> transferencia.montoFinal()})
-        retunr montosTotales.sum() // retorna un double que sería el saldo bloqueado.
+        return montosTotales.sum() // retorna un double que sería el saldo bloqueado.
     }
 }
+---------------------------------------------------------------------------------------------------------------
+6) REVISAR!!!!
+class Cuenta{
+    List<Transferencia> transferencias
 
-6)
-<<Cuenta>>
-meotod saldoDisponible(){
+    meotod saldoDisponible(){
     if(estaBloqueada()){
-        error... ya que si esta bloqueada no tiene saldo para operar
+        //lanzar error de cuenta bloqueada (ya que si esta bloqueada no tiene saldo para operar)
     }
-    filtrar las transacciones realizadas del ListaTransacciones
-    sumar montoFinal() de las transacciones filtradas
-    retornar total de suma
+    method saldoBloqueado(){
+        transferenciasAprobada = transferencias.filter({ transferencia -> transferencia.estaAprobada()})
+        montosTotales = transferenciasPendientes.map({transferencia -> transferencia.montoFinal()})
+        return montosTotales.sum() // retorna un double que sería el saldo bloqueado.
+    }
 }
-
+---------------------------------------------------------------------------------------------------------------
 7)
-<<Cuenta>>
-metodo listarTransacciones(){
-    listar todas las transacciones del usuario que llama el metodo, ya sea pendientes, aprobadas o rechazadas.
+class Cuenta{
+    List<Transferencia> transferencias
+
+    method listarTransacciones(){
+        return transferencias; // retorna la lista de transferencias
+    }
 }
+---------------------------------------------------------------------------------------------------------------
 
 8)
 <<Cuenta>>
@@ -151,12 +158,56 @@ metodo validarTransferencias(Cuenta, ListaMontos){
     al recebir las transferencias validadas llama al metodo enviarTransferenciaValidadas(Cuenta, ListaMontos)
 }
 
-9)
-desde usuario se llama al metodo solicitarReactivacion(motivo) el cual envia un mensaje al adapterBCRAClient
-que busca ejecutar el metodo solicitarReactivacion(cuenta, motivo) donde el parametro cuenta será la cuenta
-que llamó el primer metodo.
+class Transferencia{
+    method notificar(EstadoTransfe estadoTransfe){
+        this.medioComunicacion.forEach(m -> m.recibirNotificacion(this.remitente, this.estadoTransfe))
+        this.medioComunicacion.forEach(m -> m.recibirNotificacion(this.destinatario, this.estadoTransfe))
+        //notificamos tanto el que realiza la transferencia como tambien el que la recibe.
+    }
+}
 
-<<Cuenta>>
-metodo solicitarReactivacion(motivo){
-    BCRA.solicitarReactivacion(self, motivo)
+interface MedioDeComunicacion{
+    method recibirNotificacion(destinatario, mensaje){
+        //es de tipo void...
+    }
+}
+
+// a continuación damos un ejemplo de como habría que redefinir el método para utilizarlo en las clases.
+// lo mismo habria que hacer para los canales SMS y Telegram...
+
+class Email inherits MedioDeComunicacion{
+    method recibirNotificacion(destinatario, mensaje){
+        send(destinatario.email, asunto, mensaje)
+    }
+
+    method send(email, asunto, cuerpo){ //esto está demas, lo agregue como para que se entienda que la clase mail sería un MailSender.
+        (...)
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------
+
+9)
+class cuenta{
+    EstadoCuenta estadoCuenta;
+    AdapterBCRA BCRA_adaptado;
+
+    method solicitarReactivacion(string motivo){
+        respuesta = BCRA_adaptado.solicitarReactivacion(this, motivo); //devulve un booleano, el cual dirá si el desbloqueo fue aceptado o no
+        if(respuesta == true){
+            this.estadoCuenta = ACTIVA;
+        }else{
+            this.estadoCuenta = BLOQUEADO_PERMANENTEMENTE;
+        }
+    }
+
+}
+
+class Adapter BCRA{
+    BCRACliente BCRA_Posta;
+
+    method solicitarReactivacion(Cuenta cuenta, string motivo){
+        return BCRA_Posta.sendUnblockRequest(cuenta, motivo);
+        //devulve un booleano, el cual dirá si el desbloqueo fue aceptado o no
+    }
 }

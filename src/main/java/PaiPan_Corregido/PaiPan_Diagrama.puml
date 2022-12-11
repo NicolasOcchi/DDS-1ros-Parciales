@@ -6,23 +6,18 @@ class Cuenta{
     Double ingreso
     List<MedioComunicacion> mediosDeComunicacion
     List<Transferencia> Transferencias
-    ListaUltimosMontosProcesados????
     EstadoCuenta estadoCuenta
-    notificar(): void
-    enviarTransaccionesPendientes(): void
-    procesarTransaccionesValidadas(): void
+
     saldoDisponible(): double
-    listarTransacciones(): void
-    procesarTransaccionesPendientes(): void
-    enviar(monto, cuenta): void
-    depositar(monto): void
-    retirar(monto): void
-    solicitarReactivacion()
+    saldoBloqueado(): double
+    getTransferencias(): List<Transferencia>
+    enviar(double monto, Cuenta destinatario): void
+    depositar(dobule monto): void
+    retirar(dobule monto): void
+    solicitarReactivacion(string motivo)
+    calcularNivelCuenta(ingreso)
 
     recibir() // desarrolla otro equipo
-
-
-    getNivelCuenta(ingreso)
 }
 
 Cuenta --> MedioDePago
@@ -60,6 +55,7 @@ class Transferencia{
     Cuenta destinatario
     double porcentajeCosto // =2
     EstadoTransfe EstadoTransfe
+    List<MedioComunicacion> mediosDeComunicacion
 
     costo(): double // 2% - descuentoXnivel
     montoFinal(): double
@@ -92,14 +88,13 @@ interface BCRAClient{
 class AdapterBCRA implements BCRAClient{
     solicitarNivelCuenta(ingreso)
     validarTransferencias(Cuenta, ListaMontos)
-    enviarTransferenciaValidadas(Cuenta, ListaMontos)
     solicitarReactivacion(cuenta)
 }
 
 AdapterBCRA -->"*" Transferencia
 AdapterBCRA -->"*" Cuenta
 
-MedioComunicacion "*"<-- Cuenta
+Transferencia -->"*" MedioComunicacion
 
 interface MedioComunicacion{
     recibirNotificacion(remitente, mensaje)
