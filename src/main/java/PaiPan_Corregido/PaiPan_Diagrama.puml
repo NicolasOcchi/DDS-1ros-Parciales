@@ -25,6 +25,14 @@ Cuenta <-->"*" Transferencia
 Cuenta --> Nivel
 Cuenta --> EstadoCuenta
 
+class Cronos{
+    Cuenta cuentaAsociada
+    procesarTransferencias(): void
+    notificar(resultadoDeValidacion): void
+}
+Cronos -->"*" Cuenta
+Cronos --> AdapterBCRA
+
 'se crearán 3 instancias, 1 por cada nivel con su respectivo porcentaje
 class Nivel{
     double porcentajeDescuento
