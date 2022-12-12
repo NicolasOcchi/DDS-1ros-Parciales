@@ -1,5 +1,9 @@
 ---------------------------------------------------------------------------------------------------------------
 1)
+Nivel nivel_1 = new Nivel(porcentajeDescuento = 0)
+Nivel nivel_2 = new Nivel(porcentajeDescuento = 8)
+Nivel nivel_3 = new Nivel(porcentajeDescuento = 15)
+
 class Cuenta{
     String nombre;
     String email;

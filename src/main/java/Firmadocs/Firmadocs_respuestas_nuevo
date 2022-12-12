@@ -1,0 +1,129 @@
+Requerimientos detallados
+
+1. Como iniciador, deseo poder iniciar el proceso de firma de un documento, indicando el PDF.
+
+    class Iniciador{
+        Plan planContratado;
+        List<procesoFirma> procesosFirma;
+
+        method iniciarProcesoFirma(documento, orden){
+            if(!this.planContratado.puedeIniciarProcesoFirma()){
+                // lanzar erro de limite mensual de procesos firma alcanzado...
+            }
+            ProcesoFirma procesoFirmaNuevo = new ProcesoFirma(documento, orden);
+            procesosFirma.add(procesoFirmaNuevo);
+        }
+    }
+
+    class ProcesoFirma{
+        Documento documento;
+        Orden orden;
+
+        method ProcesoFirma(documento, orden){
+            this.documento = documento;\
+            this.orden = orden;
+        }
+    }
+
+2. Como iniciador, deseo poder especificar si el proceso de firma tendrá orden o será de orden indistinto.
+
+    // el orden del procesoFirma se indica al llamar al constructor, se desarrollo para el requerimiento anterior...
+
+3. Como iniciador, deseo poder asignarle colaboradores a un proceso de firma, especificando si serán lectores o firmantes.
+
+    class iniciador{
+        List<ProcesoFirma> procesosFirma;
+
+        method agregarColaborador(ProcesoFirma, Colaborador){
+            if(!this.esDuenio(procesoFirma)){
+                // lanzar error de: no puede agregar colaboradores de un proceso de firma el cual no es dueño
+            }
+            ProcesoFirma.agregarColaborador(Colaborador);
+        }
+    }
+
+    class ProcesoFirma{
+        L<Colab> colaboradores
+
+        method agregarColaborador(Colaborador){
+            this.colaboradores.add(Colaborador);
+        }
+    }
+
+4. Como iniciador, deseo poder liberar un proceso de firma, enviando notificaciones a cada uno de los colaboradores, en orden (o a todos a la vez, si es orden indistinto).
+
+
+
+5. Como colaborador, deseo poder listar los procesos de firma que tengo compartidos.
+
+    class colaborador{
+        L<ProcesoFirma> DocumentosQueColabora
+
+        method getDocumentosQueColabora(){
+            return this.DocumentosQueColabora; //retorna una lista de ProcesosFirma...
+        }
+    }
+
+    // para el caso del iniciador
+
+    class iniciador{
+        L<ProcesoFirma> procesosFirma
+
+        method getProcesosFirma(){
+            return this.procesosFirma // retorna la lista de procesosFirma que es dueño
+        }
+
+    }
+
+6. Como iniciador o colaborador, debe poder listar las personas que leyeron el documento al momento actual del proceso de firma
+
+    class ProcesoFirma{
+        List<Colaborador> colaboradoresQueLeyeron
+
+        method getColaboradoresQueLeyeron(){
+            return this.colaboradoresQueLeyeron // retorna una lista de colaboradores
+        }
+    }
+
+7. Como iniciador o colaborador, debe poder listar las personas que firmaron el documento al momento actual del proceso de firma
+
+    class ProcesoFirma{
+        List<Colaborador> colaboradoresQueFirmaron
+
+        method getColaboradoresQueFirmaron(){
+            return this.colaboradoresQueFirmaron // retorna una lista de colaboradores
+        }
+    }
+
+8. Como firmante, deseo poder firmar un documento del que sea colaborador de su proceso.
+
+
+
+9. Como lector, deseo poder marcar como leído un documento del que sea colaborador de su proceso
+
+
+
+10. Como colaborador, deseo recibir recordatorios cuando no haya realizado mi acción.
+
+
+
+11. Como colaborador, deseo poder anular un proceso de firma no liberado. A nivel facturación del plan no se contabilizará.
+
+    class Iniciador{
+        Plan planContratado;
+
+        method anular(procesoFirma){
+            if(procesoFirma.estaLiberado()){
+                this.restarUnProcesoDeFirmaMensual();
+            }
+            //Borrar la instancia del procesoFirma o, alternativamente, cambiarle el estado a ANULADO...
+        }
+
+        method restarUnProcesoDeFirmaMensual(){
+            planContratado.cantProcesosFirmaMensuales =- 1
+        }
+    }
+
+12. Como colaborador, deseo poder anular un proceso de firma ya liberado. A nivel facturación del plan sí se contabilizará.
+
+    // resuelto en el requerimiento 11...

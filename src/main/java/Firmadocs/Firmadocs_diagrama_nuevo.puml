@@ -1,0 +1,106 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Iniciador{
+    List<ProcesoFirma> ProcesosDeFirma
+    Plan planContratado
+    iniciarProcesoFirma(Documento, Orden): void
+    agregarColaborador(ProcesoFirma, Colaborador)
+    anular(procesoFirma)
+    restarUnProcesoDeFirmaMensual()
+}
+
+Iniciador -->"*" ProcesoFirma
+Iniciador --> Plan
+
+' Planes: Plata, bronce, oro. para cada uno se hará
+' una instancia del objeto Plan
+class Plan{
+    int cantProcesosFirmaMensuales;
+    puedeCrearProcesoFirma();
+}
+
+
+class ProcesoFirma{
+    List<Colaborador> colaboradores
+    Orden orden
+    Estado estado
+    Iniciador iniciador
+    List<Colaborador> colaboradoresQueFirmaron
+    List<Colaborador> colaboradoresQueLeyeron
+    PDF Documento
+
+    ProcesoFirma(PDF Documento) //constructor
+    agregarColaborador(Colaborador): void
+    liberarDocumento(): void // hay que notificar colaboradores
+    puedeVer(Colaborador): Bool
+    puedeFirmar(Colaborador): Bool
+    puedeLeer(Colaborador): Bool
+    quienesLeyeron(): List<Colaborador>
+    quienesFirmaron(): List<Colaborador>
+    notificarLiberacion(): void
+    estaLiberado(): Estado
+
+}
+
+ProcesoFirma --> Orden
+ProcesoFirma --> Estado
+ProcesoFirma -->"*" Colaborador
+ProcesoFirma --> AdapterGeneradorDeFirmas
+
+interface GeneradorDeFirma{
+    generarFirma(nombre, apellido, email, telefono): String
+}
+
+class AdapterGeneradorDeFirmas implements GeneradorDeFirma{
+    generarFirma(Colaborador): String
+}
+
+enum Orden{
+    INDISTINTO
+    PREFIJADO
+}
+
+enum Estado{
+    NO_LIBERADO
+    LIBERADO
+    FINALIZADO
+}
+
+abstract Colaborador{
+    String nombre
+    String apellido
+    String email
+    String telefono
+    List<ProcesoFirma> DocumentosQueColabora
+    List<MedioDeNotificacion> mediosDeNotificacion
+}
+
+class Firmante implements Colaborador{
+    cargarDatos(procesoFirma): void
+    firmar(procesoFirma): void
+}
+
+class Lector implements Colaborador{
+    leer(procesoFirma): void
+}
+
+Colaborador -->"*" MedioDeNotificacion
+
+interface MedioDeNotificacion{
+    recibirNotificacion(destinatario, mensaje): void
+}
+
+class MailSender implements MedioDeNotificacion{
+    recibirNotificacion(destinatario, mensaje): void
+}
+
+class NotificacionDeAplicacion implements MedioDeNotificacion{
+    recibirNotificacion(destinatario, mensaje): void
+}
+
+class SMS implements MedioDeNotificacion{
+    recibirNotificacion(destinatario, mensaje): void
+}
+
+@enduml
