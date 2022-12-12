@@ -12,9 +12,10 @@ class Iniciador{
 
 Iniciador -->"*" ProcesoFirma
 Iniciador --> Plan
+Iniciador --> Colaborador
 
 ' Planes: Plata, bronce, oro. para cada uno se hará
-' una instancia del objeto Plan
+' una instancia del objeto/class Plan
 class Plan{
     int cantProcesosFirmaMensuales;
     puedeCrearProcesoFirma();
@@ -26,9 +27,10 @@ class ProcesoFirma{
     Orden orden
     Estado estado
     Iniciador iniciador
-    List<Colaborador> colaboradoresQueFirmaron
-    List<Colaborador> colaboradoresQueLeyeron
+    List<Firmante> colaboradoresQueFirmaron
+    List<Lector> colaboradoresQueLeyeron
     PDF Documento
+    List<MedioDeNotificacion> mediosDeNotificacion
 
     ProcesoFirma(PDF Documento) //constructor
     agregarColaborador(Colaborador): void
@@ -36,11 +38,12 @@ class ProcesoFirma{
     puedeVer(Colaborador): Bool
     puedeFirmar(Colaborador): Bool
     puedeLeer(Colaborador): Bool
-    quienesLeyeron(): List<Colaborador>
-    quienesFirmaron(): List<Colaborador>
-    notificarLiberacion(): void
+    quienesLeyeron(): List<Lector>
+    quienesFirmaron(): List<Firmante>
     estaLiberado(): Estado
+    finalizar(): void
 
+    notificar(Colaborador/Iniciador, ProcesoFirma, Mensaje)
 }
 
 ProcesoFirma --> Orden
@@ -73,19 +76,18 @@ abstract Colaborador{
     String email
     String telefono
     List<ProcesoFirma> DocumentosQueColabora
-    List<MedioDeNotificacion> mediosDeNotificacion
 }
 
-class Firmante implements Colaborador{
+class Firmante extends Colaborador{
     cargarDatos(procesoFirma): void
     firmar(procesoFirma): void
 }
 
-class Lector implements Colaborador{
+class Lector extends Colaborador{
     leer(procesoFirma): void
 }
 
-Colaborador -->"*" MedioDeNotificacion
+ProcesoFirma -->"*" MedioDeNotificacion
 
 interface MedioDeNotificacion{
     recibirNotificacion(destinatario, mensaje): void

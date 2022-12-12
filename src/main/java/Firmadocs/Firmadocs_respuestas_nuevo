@@ -78,7 +78,7 @@ Requerimientos detallados
 6. Como iniciador o colaborador, debe poder listar las personas que leyeron el documento al momento actual del proceso de firma
 
     class ProcesoFirma{
-        List<Colaborador> colaboradoresQueLeyeron
+        List<Lector> colaboradoresQueLeyeron
 
         method getColaboradoresQueLeyeron(){
             return this.colaboradoresQueLeyeron // retorna una lista de colaboradores
@@ -88,7 +88,7 @@ Requerimientos detallados
 7. Como iniciador o colaborador, debe poder listar las personas que firmaron el documento al momento actual del proceso de firma
 
     class ProcesoFirma{
-        List<Colaborador> colaboradoresQueFirmaron
+        List<Firmante> colaboradoresQueFirmaron
 
         method getColaboradoresQueFirmaron(){
             return this.colaboradoresQueFirmaron // retorna una lista de colaboradores
