@@ -50,8 +50,8 @@ Requerimientos detallados
         }
     }
 
-4. Como iniciador, deseo poder liberar un proceso de firma, enviando notificaciones a cada uno de los colaboradores, en orden (o a todos a la vez, si es orden indistinto).
-
+4. Como iniciador, deseo poder liberar un proceso de firma, enviando notificaciones a cada uno de los colaboradores,
+en orden (o a todos a la vez, si es orden indistinto).
 
 
 5. Como colaborador, deseo poder listar los procesos de firma que tengo compartidos.
@@ -97,15 +97,9 @@ Requerimientos detallados
 
 8. Como firmante, deseo poder firmar un documento del que sea colaborador de su proceso.
 
-
-
 9. Como lector, deseo poder marcar como leído un documento del que sea colaborador de su proceso
 
-
-
 10. Como colaborador, deseo recibir recordatorios cuando no haya realizado mi acción.
-
-
 
 11. Como colaborador, deseo poder anular un proceso de firma no liberado. A nivel facturación del plan no se contabilizará.
 
